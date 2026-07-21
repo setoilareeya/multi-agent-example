@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Hive — Claude Code สั่ง sub-agent ของตัวเอง</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <link rel="stylesheet" href="/hive.css" />
+</head>
+<body>
+  <div class="hive">
+
+    <!-- ── masthead ── -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">🧠</div>
+        <div>
+          <h1>CLAUDE HIVE</h1>
+          <p class="sub"><b>Claude Code กระจาย sub-agent ของตัวเอง</b> — ต่างจากหน้าอื่นที่เราสั่ง CLI แยกกัน หน้านี้ยิง <code>claude -p</code> ครั้งเดียว แล้ว Claude Code ใช้ <b>Task tool</b> แตกงานให้ sub-agent ของมันเอง (เช่น <code>researcher</code>) ทำขนานกัน แล้วรวบผลกลับมาสรุป</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <a class="backlink" href="/index.html">◄ ห้องบัญชาการ</a>
+        <div class="conn" id="conn"><span class="dot"></span> <span id="connText">พร้อม</span></div>
+      </div>
+    </header>
+
+    <!-- ── command bar ── -->
+    <section class="command">
+      <div class="prompt-row">
+        <span class="prompt-glyph">❯</span>
+        <input id="q" type="text" autocomplete="off" placeholder="พิมพ์โจทย์ที่อยากให้ Claude Code กระจาย sub-agent ไป research…" />
+        <button class="btn" id="launch">▶ เริ่ม</button>
+        <button class="btn ghost" id="stop" hidden>■ หยุด</button>
+      </div>
+      <div class="presets" id="presets"></div>
+    </section>
+
+    <!-- ── phase stepper ── -->
+    <div class="phases" id="phases">
+      <span class="phase" data-phase="plan">1 · วางแผน</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="delegate">2 · กระจาย sub-agent</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="work">3 · ทำงานขนาน</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="synthesize">4 · สังเคราะห์</span>
+    </div>
+
+    <!-- ── constellation + feed ── -->
+    <div class="grid">
+      <div>
+        <div class="section-label">⬡ Hive · Claude Code + sub-agents</div>
+        <div class="constellation" id="constellation">
+          <svg class="links" id="links"></svg>
+          <div class="hub" id="hub">
+            <div>
+              <div class="hub-emoji">🧠</div>
+              <div class="hub-name">Claude Code</div>
+              <div class="hub-role">ORCHESTRATOR</div>
+            </div>
+          </div>
+          <div class="hint" id="hint">Claude Code จะแตกโจทย์แล้วกระจายให้ sub-agent ของตัวเอง (Task tool) ทำขนานกัน แล้วรวบผลกลับมาสรุป</div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="section-label">📡 activity feed</div>
+        <div class="feed-wrap">
+          <div class="feed-head">สายกิจกรรมของ hive <span class="live-tag" id="liveTag" hidden>● LIVE</span></div>
+          <div class="feed" id="feed"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ── synthesis ── -->
+    <section class="synthesis" id="synthesis">
+      <div class="syn-head">
+        <div class="syn-avatar">🧠</div>
+        <div>
+          <h2>คำตอบสุดท้าย</h2>
+          <p>Claude Code สังเคราะห์จากผลของ sub-agent ทั้งหมด</p>
+        </div>
+        <div class="syn-cost" id="synCost"></div>
+      </div>
+      <div class="syn-body" id="synBody"></div>
+    </section>
+
+    <div class="foot">
+      pattern: <b>self-delegation</b> · <b>claude -p</b> + Task tool → sub-agents · อ้างอิงบทความ “ใช้ AI สั่ง AI ตัวอื่นได้ยังไง”
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="/hive.js"></script>
+</body>
+</html>

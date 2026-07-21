@@ -7,9 +7,16 @@
   "scripts": {
     "web": "node src/server.ts",
     "send": "node src/send-to-each.ts",
-    "orchestrate": "node src/orchestrate.ts"
+    "orchestrate": "node src/orchestrate.ts",
+    "web:bun": "bun src/server.ts",
+    "send:bun": "bun src/send-to-each.ts",
+    "orchestrate:bun": "bun src/orchestrate.ts"
   },
   "engines": {
-    "node": ">=23.6"
+    "node": ">=23.6",
+    "bun": ">=1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1"
   }
 }

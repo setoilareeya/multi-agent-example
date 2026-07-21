@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guild Hall — โหมด RPG · multi-agent</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>" />
+  <link rel="stylesheet" href="/rpg.css" />
+</head>
+<body>
+  <div class="hall">
+
+    <!-- ── masthead ── -->
+    <header class="masthead window">
+      <a class="backlink" href="/index.html">◄ ห้องบัญชาการ</a>
+      <div class="crest">
+        <div class="crest-badge">⚔️</div>
+        <div>
+          <h1 class="title">GUILD HALL</h1>
+          <p class="subtitle">หอผจญภัย multi-agent — <b>Athena</b> หัวหน้ากิลด์ ประเมินเควสแล้ว<b>เลือกผู้กล้าเพียง 1 คน</b>ให้ออกเดินทาง จากนั้นนำรายงานมาสรุปเป็นคำตอบ (เรียก Agent CLI จริง)</p>
+        </div>
+      </div>
+      <div class="conn" id="conn"><span class="dot"></span> <span id="connText">พร้อม</span></div>
+    </header>
+
+    <!-- ── quest board ── -->
+    <section class="questboard">
+      <div class="qb-label">📜 กระดานเควส · QUEST BOARD</div>
+      <div class="qb-row">
+        <span class="qb-glyph">❯</span>
+        <input id="q" type="text" autocomplete="off" placeholder="จารึกเควสที่อยากให้กิลด์ออกไปผจญ…" />
+        <button class="btn" id="launch"><span class="btn-ic">▶</span> รับเควส</button>
+        <button class="btn danger" id="stop" hidden>■ ยกเลิก</button>
+      </div>
+      <div class="presets" id="presets"></div>
+    </section>
+
+    <!-- ── phase stepper ── -->
+    <div class="phases" id="phases">
+      <span class="phase" data-phase="assess">1 · ประเมิน</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="choose">2 · เลือกผู้กล้า</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="quest">3 · ผจญภัย</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="report">4 · รายงาน</span>
+      <span class="pa">→</span>
+      <span class="phase" data-phase="verdict">5 · บทสรุป</span>
+    </div>
+
+    <!-- ── 2.5D isometric office stage (canvas, rendered by rpg.js) ── -->
+    <section class="stage window">
+      <div class="stage-head">
+        <span class="stage-title">🏢 สำนักงานกิลด์ · GUILD OFFICE</span>
+        <span class="stage-hint">ตัวละครเดินไปมาในออฟฟิศ — พอได้รับมอบหมาย ผู้กล้าจะกลับไปนั่งทำงานที่โต๊ะตัวเอง (ขึ้นสถานะ “กำลังทำงาน”) แล้วเดินมารายงานผลให้หัวหน้า</span>
+      </div>
+      <div class="stage-canvas-wrap">
+        <canvas id="office"></canvas>
+        <div class="workhud" id="workhud" hidden></div>
+      </div>
+    </section>
+
+    <!-- ── guild master (leader) — rendered by rpg.js ── -->
+    <div class="leaderwrap" id="leaderwrap"></div>
+
+    <div class="section-label">⚑ ปาร์ตี้นักผจญภัย · THE PARTY</div>
+    <!-- ── adventurers — rendered by rpg.js ── -->
+    <div class="party" id="party"></div>
+
+    <!-- ── narrator dialogue ── -->
+    <section class="dialogue window">
+      <div class="dlg-head">🗡️ บันทึกการผจญภัย <span class="live-tag" id="liveTag" hidden>● LIVE</span></div>
+      <div class="dlg-scroll" id="dialogue"></div>
+    </section>
+
+    <!-- ── guild master's verdict ── -->
+    <section class="verdict" id="verdict">
+      <div class="vd-head">
+        <div class="vd-seal">🦉</div>
+        <div>
+          <h2>คำวินิจฉัยของหัวหน้ากิลด์</h2>
+          <p id="vdSub">Athena สรุปจากรายงานของผู้กล้าที่ถูกเลือก</p>
+        </div>
+        <div class="vd-gold" id="vdCost"></div>
+      </div>
+      <div class="vd-body" id="vdBody"></div>
+    </section>
+
+    <div class="foot">
+      routing pattern · หัวหน้ากิลด์ <b>Athena</b>=Claude Code · ผู้กล้า: <b>Orion</b>=Codex · <b>Luna</b>=OpenCode · <b>Atlas</b>=Antigravity
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="/rpg.js"></script>
+</body>
+</html>

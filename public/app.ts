@@ -1,12 +1,4 @@
-// ============================================================================
-// app.ts — frontend ของ Agent Orchestra (TypeScript)
-//   ไฟล์นี้ถูก "ตัด type" โดย server (module.stripTypeScriptTypes) แล้วเสิร์ฟเป็น
-//   /app.js ให้ browser — จึงเขียนเป็น TS ได้โดยไม่ต้อง build (ห้ามมี import/export)
-//
-//   หน้าที่: ต่อ SSE ที่ /api/run แล้ว render ทีม agent + สายสื่อสาร real-time
-// ============================================================================
-
-// ---------- ชนิดข้อมูลที่รับจาก server ----------
+// ---------- data shapes received from the server ----------
 interface AgentInfo {
   key: string; name: string; emoji: string; role: 'orchestrator' | 'worker';
   cli: string; model: string; color: string; tagline: string; cmd: string; installed: boolean;
@@ -42,7 +34,7 @@ let agents: Record<string, AgentInfo> = {};
 let es: EventSource | null = null;
 let finished = false;
 
-// ---------- tiny markdown -> html (escape ก่อนเสมอ) ----------
+// ---------- tiny markdown -> html (always escape first) ----------
 function esc(s: unknown): string {
   return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
 }
@@ -68,7 +60,7 @@ function mdToHtml(text: string): string {
   return out;
 }
 
-// เน้นชื่อ CLI ในคำสั่งด้วยสีของ agent
+// highlight the CLI name in the command using the agent's color
 function cmdHtml(cmd: string, cli: string): string {
   return esc(cmd).replace(cli, `<span class="tok">${cli}</span>`);
 }
@@ -95,7 +87,7 @@ function toast(msg: string): void {
   setTimeout(() => t.classList.remove('show'), 4200);
 }
 
-// ---------- สร้างการ์ด agent ----------
+// ---------- build agent card ----------
 function agentCard(a: AgentInfo): HTMLElement {
   const card = el('article', 'agent-card' + (a.role === 'orchestrator' ? ' orchestrator' : ''));
   card.dataset.agent = a.key;
@@ -167,7 +159,7 @@ function addMessage(m: SEvent): void {
   thread.scrollTop = thread.scrollHeight;
 }
 
-// พิมพ์คำตอบสังเคราะห์แบบเผยทีละบล็อก
+// print the synthesized answer, revealing it block by block
 function revealSynthesis(node: HTMLElement, text: string): void {
   node.innerHTML = mdToHtml(text);
   Array.from(node.children).forEach((k, i) => {
@@ -275,7 +267,7 @@ function startRun(): void {
     try { handle(JSON.parse(e.data)); } catch (err) { console.error('bad event', e.data, err); }
   };
   es.onerror = () => {
-    if (finished) return;               // ปิดปกติหลัง done
+    if (finished) return;               // normal close after done
     setConn('err', 'การเชื่อมต่อหลุด');
     toast('การเชื่อมต่อกับ server หลุด');
     endRun();
@@ -306,17 +298,17 @@ function init(): void {
   ($('#stop') as HTMLElement).onclick = stopRun;
   $('#q').addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') startRun(); });
 
-  // โหลด roster ล่วงหน้าเพื่อโชว์การ์ดทีม (state idle) ก่อนกดเริ่ม
+  // preload the roster to show the team cards (idle state) before hitting start
   fetch('/api/agents').then((r) => r.json()).then((d) => {
     agents = d.agents;
     buildPipeline(d.agents, d.workers, d.orchestrator);
     const missing = Object.values(d.agents as Record<string, AgentInfo>).filter((a) => !a.installed).map((a) => a.name);
     if (missing.length) toast('ไม่พบ CLI ของ: ' + missing.join(', ') + ' (จะข้ามตอนรัน)');
-  }).catch(() => { /* เปิดหน้าแบบ static ก็ยังได้ */ });
+  }).catch(() => { /* opening the page statically is fine too */ });
 }
 
-// module script ถูก defer อยู่แล้ว แต่กันไว้เผื่อ DOM ยังไม่พร้อม
+// module scripts are already deferred, but guard in case the DOM isn't ready yet
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
 
-export {}; // ทำให้ไฟล์เป็น ES module (โหลดด้วย <script type="module">)
+export {}; // make this file an ES module (loaded via <script type="module">)
