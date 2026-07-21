@@ -1,0 +1,15 @@
+{
+  "name": "multi-agent-example",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI สั่ง AI — orchestrator-worker demo (TypeScript, เรียก Agent CLI จริง)",
+  "scripts": {
+    "web": "node src/server.ts",
+    "send": "node src/send-to-each.ts",
+    "orchestrate": "node src/orchestrate.ts"
+  },
+  "engines": {
+    "node": ">=23.6"
+  }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Orchestra — ห้องบัญชาการ multi-agent</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ── top bar ── -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🛰️</div>
+        <div>
+          <h1>AGENT ORCHESTRA</h1>
+          <p class="sub">ห้องบัญชาการ multi-agent — <b>Athena</b> รับโจทย์แล้วสั่ง <b>Orion · Luna · Atlas</b> ทำขนานกัน แล้วสังเคราะห์กลับ (เรียก Agent CLI จริง)</p>
+        </div>
+      </div>
+      <div class="conn" id="conn"><span class="dot"></span> <span id="connText">พร้อม</span></div>
+    </header>
+
+    <!-- ── command bar ── -->
+    <section class="command">
+      <div class="prompt-row">
+        <span class="prompt-glyph">❯</span>
+        <input id="q" type="text" autocomplete="off"
+               placeholder="พิมพ์โจทย์ที่อยากให้ทีม agent ไป research…" />
+        <button class="btn" id="launch">▶ เริ่มภารกิจ</button>
+        <button class="btn" id="stop" hidden>■ หยุด</button>
+      </div>
+      <div class="presets" id="presets"></div>
+    </section>
+
+    <!-- ── phase stepper ── -->
+    <div class="phases" id="phases">
+      <span class="phase" data-phase="planning">1 · วางแผน</span>
+      <span class="phase-arrow">→</span>
+      <span class="phase" data-phase="dispatch">2 · มอบหมาย</span>
+      <span class="phase-arrow">→</span>
+      <span class="phase" data-phase="working">3 · ทำงานขนาน</span>
+      <span class="phase-arrow">→</span>
+      <span class="phase" data-phase="synthesis">4 · สังเคราะห์</span>
+      <span class="phase-arrow">→</span>
+      <span class="phase" data-phase="done">✓ เสร็จ</span>
+    </div>
+
+    <!-- ── main grid: pipeline + comms ── -->
+    <div class="grid">
+      <div>
+        <div class="section-label">ทีมปฏิบัติการ · pipeline</div>
+        <div class="pipeline" id="pipeline">
+          <!-- orchestrator + connectors + workers rendered by app.js -->
+        </div>
+      </div>
+
+      <aside class="comms">
+        <div class="comms-head">📡 สายสื่อสารระหว่าง agent <span class="live-tag" id="liveTag" hidden>LIVE</span></div>
+        <div class="thread" id="thread"></div>
+      </aside>
+    </div>
+
+    <!-- ── synthesis ── -->
+    <section class="synthesis" id="synthesis">
+      <div class="syn-head">
+        <div class="ac-avatar">🦉</div>
+        <div>
+          <h2>คำตอบสุดท้าย</h2>
+          <p>สังเคราะห์โดย Athena จาก finding ของทั้งทีม</p>
+        </div>
+        <div class="syn-cost" id="synCost"></div>
+      </div>
+      <div class="syn-body" id="synBody"></div>
+    </section>
+
+    <div class="foot">
+      pattern: orchestrator-worker · Athena=Claude Code · Orion=Codex · Luna=OpenCode · Atlas=Antigravity ·
+      อ้างอิงจากบทความ <span>“ใช้ AI สั่ง AI ตัวอื่นได้ยังไง”</span>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

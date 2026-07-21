@@ -1,0 +1,13 @@
+# dependencies (this project is zero-dep, but just in case)
+node_modules/
+
+# logs / runtime
+*.log
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
