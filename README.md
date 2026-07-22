@@ -215,6 +215,31 @@ answer is Claude Code's own synthesis.
 and parses the NDJSON stream, surfacing each `Task` tool-use (a sub-agent spawn) and its `tool_result` over **SSE**
 (`/api/hive` → `hive()`). The stream-json schema isn't officially documented, so the parser is deliberately defensive.
 
+### 📟 One command → every line in the activity feed
+
+The whole page is a **single** real command. Claude Code then delegates to its own sub-agents *inside* that one
+process, so every badge in the feed (`start` / `plan` / `Task` / `result` / …) is an event **parsed out of that
+command's stream** — not a separate CLI call:
+
+```bash
+claude -p "คุณคือหัวหน้าทีมวิจัย … ใช้ Task tool กระจายงานให้ sub-agent … โจทย์: <question>" \
+  --output-format stream-json --verbose \
+  --allowedTools Task,Agent,WebSearch,WebFetch,Read,Grep,Glob
+```
+
+| Feed badge | SSE event | Where it comes from in the stream |
+|-----------|-----------|-----------------------------------|
+| 🧠 `start` | `run_start` | the moment `hive()` spawns the one `claude -p …` — the **only** real subprocess of the whole run |
+| 🧠 `plan` | `main_text` (kind `plan`) | an `assistant` event's `text` block, **before** any delegation |
+| 🔎 `Task` — `spawn → researcher` | `spawn` | an `assistant` event's `tool_use` block whose `name` is `Task`/`Agent` — Claude Code invoking its **own** Task tool (not a shell command) |
+| 🔎 `result` | `subagent_result` | the matching `user` event's `tool_result` block |
+| 🧠 `synthesis` | `main_text` (kind `synthesis`) | a `text` block **after** delegation |
+| final answer + 🪙 cost | `result` | the stream's final `result` event (`result` + `total_cost_usd`) — rendered in the synthesis panel, not the feed |
+
+> `spawn → researcher` has **no** standalone command — it's Claude Code calling the built-in `Task` tool to run the
+> [`researcher`](.claude/agents/researcher.md) sub-agent inside the same process. The `--allowedTools` list below is
+> exactly what lets it do that headlessly.
+
 ### ⚠️ Enabling sub-agents in headless mode
 
 For Claude Code to spawn sub-agents non-interactively, the `Task`/`Agent` tool (and the sub-agents' own tools) must
